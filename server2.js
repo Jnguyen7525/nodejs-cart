@@ -31,6 +31,21 @@ app.get('/products/:category', async (req, res)=>{
   }
 });
 
+//update products in db
+app.put('/products/:title', async (req, res) =>{
+  try{
+    const updatedProduct=await Products.update(
+    {title: req.params.title},
+    {$set: req.body,},
+    {new: true}
+    );
+    res.status(200).json(updatedProduct);
+  }
+  catch(err){
+    res.status(500).json(err);
+  }
+});
+
 //add products to db
 app.post('/products', async (req, res)=>{
   const newProduct= new Products(req.body);
@@ -54,6 +69,18 @@ app.get('/products', async (req, res)=>{
       res.status(500).json(err);
     }
   });
+
+//delete
+app.delete('/products/:id', async (req,res)=>{
+  try{
+    await Products.deleteOne({ _id: req.params.id });
+    res.status(200).json('Product deleted');
+  }
+  catch(err){
+    res.status(500).json(err);
+  }
+});
+
 const port = process.env.PORT || 4000;
 app.listen(port, () => {
     console.log(`Application is running on ${port}`);
